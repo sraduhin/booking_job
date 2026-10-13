@@ -25,4 +25,4 @@ CREATE TABLE bookings (
 );
 
 -- уникальность user + idempotency key
-CREATE UNIQUE INDEX event_user_dedup_idx ON bookings (event_id, user_id, dedup_id);
+CREATE UNIQUE INDEX user_dedup_idx ON bookings (user_id, dedup_id);
