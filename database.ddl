@@ -2,9 +2,8 @@
 CREATE TABLE events (
     id SERIAL PRIMARY KEY,
     capacity INT NOT NULL DEFAULT 100,
-    booked INT NOT NULL DEFAULT 0,
     -- ограничения
-    CHECK (booked <= capacity AND booked >= 0 AND capacity >= 0)
+    CHECK (capacity >= 0)
 );
 
 -- гости
