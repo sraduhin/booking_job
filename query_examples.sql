@@ -26,6 +26,10 @@ COMMIT;
 
 -- Подтвердить бронь.
 BEGIN;
+    SELECT 1 FROM events
+    WHERE id = (SELECT event_id FROM bookings WHERE id = $booking_id)
+    FOR UPDATE;
+
     SELECT created_at, cancelled_at, confirmed
     FROM bookings
     WHERE id = $booking_id
@@ -33,6 +37,7 @@ BEGIN;
 
     UPDATE bookings SET confirmed = true
     WHERE id = $booking_id
+      AND user_id = $user_id
       AND cancelled_at IS NULL
       AND confirmed = false
       AND created_at > clock_timestamp() - INTERVAL '10 minutes';
@@ -41,5 +46,7 @@ COMMIT;
 -- Снять бронь по booking_id.
 UPDATE bookings SET cancelled_at = clock_timestamp()
 WHERE id = $booking_id
+  AND user_id = $user_id
   AND cancelled_at IS NULL
-  AND confirmed = false;
+  AND confirmed = false
+  AND created_at > clock_timestamp() - INTERVAL '10 minutes';
