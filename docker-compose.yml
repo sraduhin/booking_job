@@ -1,0 +1,22 @@
+services:
+  db:
+    image: postgres:16
+    container_name: booking_db
+    environment:
+      POSTGRES_USER: booking
+      POSTGRES_PASSWORD: booking
+      POSTGRES_DB: booking
+    ports:
+      - "25432:5432"
+    volumes:
+      - ../.db_data/bookings/postgres:/var/lib/postgresql/data
+      - ./database.ddl:/docker-entrypoint-initdb.d/01_schema.sql:ro
+      - ./seed.sql:/docker-entrypoint-initdb.d/02_seed.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U booking -d booking"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:
