@@ -2,7 +2,6 @@
 CREATE TABLE events (
     id SERIAL PRIMARY KEY,
     capacity INT NOT NULL DEFAULT 100,
-    -- ограничения
     CHECK (capacity >= 0)
 );
 
@@ -15,12 +14,13 @@ CREATE TABLE users (
 CREATE TABLE bookings (
     id SERIAL PRIMARY KEY,
     dedup_id INT NOT NULL,
-    user_id INT REFERENCES users(id),
-    event_id INT REFERENCES events(id),
+    user_id INT NOT NULL REFERENCES users(id),
+    event_id INT NOT NULL REFERENCES events(id),
     count INT NOT NULL DEFAULT 1,
-    created_at TIMESTAMP DEFAULT NOW(),
+    created_at TIMESTAMP NOT NULL DEFAULT NOW(),
     cancelled_at TIMESTAMP,
-    confirmed BOOL NOT NULL DEFAULT FALSE
+    confirmed BOOL NOT NULL DEFAULT FALSE,
+    CHECK (count >= 1 AND count <= 5)
 );
 
 -- уникальность user + idempotency key

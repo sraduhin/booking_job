@@ -1,0 +1,3 @@
+-r requirements.txt
+# версия должна совпадать с PyCharm (Help → About)
+pydevd-pycharm
