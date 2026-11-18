@@ -35,3 +35,15 @@ DEBUG=true docker compose up --build api
 При `DEBUG=true` приложение при старте подключается к IDE через `DEBUG_HOST` (`host.docker.internal` из контейнера).
 
 Заголовки: `X-User-Id`, для создания брони ещё `Dedup-Id` (INT).
+
+## Тесты
+
+Нужен запущенный Postgres из compose (`localhost:25432`). Тесты сами создают БД `booking_test` и накатывают миграции.
+
+```bash
+docker compose up -d db
+.venv/bin/pip install -r requirements-dev.txt
+.venv/bin/pytest
+```
+
+Переопределение URL: `TEST_DATABASE_URL=postgresql+asyncpg://booking:booking@localhost:25432/booking_test`.
