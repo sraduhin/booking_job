@@ -9,6 +9,8 @@ class Settings(BaseSettings):
     database_url: str = (
         "postgresql+asyncpg://booking:booking@localhost:25432/booking"
     )
+    redis_url: str = "redis://localhost:26379/0"
+    availability_cache_ttl_seconds: int = 10
     booking_ttl_minutes: int = 10
     debug: bool = False
     debug_host: str = "host.docker.internal"

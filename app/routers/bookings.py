@@ -3,6 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app import cache
 from app.db import get_db
 from app.deps import get_current_user_id, get_dedup_id
 from app.models import Booking
@@ -53,6 +54,7 @@ async def create_booking(
         )
     except booking_service.BookingError as exc:
         raise HTTPException(status_code=exc.status_code, detail=exc.detail) from exc
+    await cache.invalidate_availability(booking.event_id)
     return to_response(booking)
 
 
@@ -112,4 +114,5 @@ async def cancel_booking(
         booking = await booking_service.cancel_booking(session, booking_id, user_id)
     except booking_service.BookingError as exc:
         raise HTTPException(status_code=exc.status_code, detail=exc.detail) from exc
+    await cache.invalidate_availability(booking.event_id)
     return to_response(booking)

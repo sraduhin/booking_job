@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app import cache
 from app.db import get_db
 from app.models import Event
 from app.routers.schemas import ErrorResponse
@@ -30,8 +31,15 @@ async def get_event_availability(
     event_id: int,
     session: Annotated[AsyncSession, Depends(get_db)],
 ) -> AvailabilityResponse:
+    cached = await cache.get_cached_availability(event_id)
+    if cached is not None:
+        return AvailabilityResponse(event_id=event_id, available=cached)
+
+    generation = await cache.read_generation(event_id)
     try:
         available = await booking_service.get_availability(session, event_id)
     except booking_service.BookingError as exc:
         raise HTTPException(status_code=exc.status_code, detail=exc.detail) from exc
+
+    await cache.set_cached_availability(event_id, available, generation)
     return AvailabilityResponse(event_id=event_id, available=available)

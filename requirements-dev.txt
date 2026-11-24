@@ -1,6 +1,6 @@
 -r requirements.txt
 # версия должна совпадать с PyCharm (Help → About)
-pydevd-pycharm
+pydevd-pycharm~=261.22158.340
 pytest>=8.3.0
 pytest-asyncio>=0.24.0
 httpx>=0.27.0
